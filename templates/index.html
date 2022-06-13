@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{%load static%}
+<style>
+  /* CUSTOMIZE THE CAROUSEL
+-------------------------------------------------- */
+
+  /* Carousel base class */
+  .carousel {
+    margin-bottom: 4rem;
+  }
+
+  /* Since positioning the image, we need to help out the caption */
+  .carousel-caption {
+    bottom: 3rem;
+    z-index: 10;
+  }
+
+  /* Declare heights because of positioning of img element */
+  .carousel-item {
+    height: 32rem;
+  }
+
+  .carousel-item>img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    height: 32rem;
+  }
+</style>
+
+
+<script>
+
+
+  (function () {
+    'use strict';
+    document.getElementById('home').className = "nav-link active";
+
+  })();
+</script>
+
+<main class="cover-container d-flex w-100 p-3 mx-auto flex-column" onload="myFunction();">
+  {% for message in messages %}
+  <p class="alert alert-success alert-dismissible fade show mx-auto" role="alert">
+    <strong><small>{{message}}</small></strong>
+  </p>
+  {% endfor %}
+
+  <div id="myCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-touch="false" data-bs-interval="false">
+
+    <div class="carousel-indicators" id="indicators">
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+        aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+
+    <div class="carousel-inner">
+
+      <div class="carousel-item active">
+
+
+
+        <div class="container w-100 h-100 text-center d-flex">
+
+          <div class="m-auto">
+
+            <h1>Welcome to Nikhil's Website</h1>
+            <p class="text-muted">This is a growing website. Checkout the all cool features</p>
+            {% if not request.user.is_authenticated %}
+            <p>
+              <a href="register" class="btn btn-lg btn-secondary fw-bold border-black bg-white">Sign Up</a>
+            </p>
+            {% else %}
+            <p>
+              <a href="signout" class="btn btn-lg btn-secondary fw-bold border-black bg-white">Logout</a>
+            </p>
+            {%endif%}
+
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+
+        <!--Embeded my YouTube song 
+          <div class="w-100 h-100 d-flex">
+
+          <style>
+            @media only screen and (max-width:640px) {
+              iframe {
+                height: max-content;
+                width: max-content;
+              }
+            }
+          </style>
+
+          <iframe class="m-auto" height="315px" width="560px" preserveAspectRatio="xMidYMid slice" focusable="false"
+            src="https://www.youtube.com/embed/O3IOdalrHNE" title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+
+        </div>-->
+        <div class="container w-100 h-100 text-center d-flex">
+          <div class="m-auto">
+            <h1>Confused about what to watch today?</h1>
+            <p class="text-muted">This cool feature is created by me to get suggestions among the top popular movies/shows.
+            </p>
+            <p>
+              <a href="features/entertainment" class="btn btn-lg btn-secondary btn-sm fw-bold border-black bg-white">Check</a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        
+        <div class="container w-100 h-100 text-center d-flex" style="background-image: url('/static/userid/fitness-work.jpg'); opacity:0.07;">
+          
+        </div>  
+        <div class="carousel-caption" style="bottom: 35%;">
+          <h1 >A fitness website created my me</h1>
+            <p class="text-muted">I created this website in WordPress and used Python Django for some backend processes.
+            </p>
+            <p>
+              <a href="https://powerfitindia.com/" target="_blank" class="btn btn-lg btn-secondary btn-sm fw-bold border-black bg-white">Check</a>
+            </p>
+        </div>
+      </div>
+    </div>
+    <button class="carousel-control-prev mt-auto mb-auto" style="height:fit-content; width: fit-content;" type="button"
+      data-bs-target="#myCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next mt-auto mb-auto" style="height:fit-content; width: fit-content;" type="button"
+      data-bs-target="#myCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+  <div class="container" id="loader1">
+    <div>
+      <h6 class="text-muted">Latest updates</h6>
+      <hr><br>
+    </div>
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div id="afterload"></div>
+</main>
+
+
+
+
+
+<script>
+  const mydiv = document.getElementById('afterload')
+
+  fetch("/apis/home-content")
+    .then(response => response.text())
+    .then(data => {
+      mydiv.innerHTML = data
+      $('#loader1').hide()
+      var descs = document.querySelectorAll('p.card-text.mb-auto')
+
+      for (let i = 0; i < descs.length; i++) {
+
+        if (descs[i].innerHTML.length > 100) {
+          descs[i].innerHTML = descs[i].innerHTML.substring(0, 100)
+          descs[i].innerHTML += "..."
+        }
+      }
+    })
+    .catch(error => {
+      $('#loader1').hide()
+      mydiv.innerHTML = `<div class="container">
+                              <div>
+                                <h6 class="text-muted">Latest updates</h6>
+                                <hr><br>
+                              </div><h4>Something went wrong</h4>`
+      console.log(error)
+    })
+
+
+
+  function myFunction1() {
+    document.querySelector('#latesthead').innerHTML += `<div class="spinner-border spinner-border-sm" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                        </div>`
+    $('.bi.bi-shuffle').hide()
+    fetch("/apis/home-content")
+      .then(response => response.text())
+      .then(data => {
+        mydiv.innerHTML = data
+        $('#loader1').hide()
+        var descs = document.querySelectorAll('p.card-text.mb-auto')
+
+        for (let i = 0; i < descs.length; i++) {
+
+          if (descs[i].innerHTML.length > 100) {
+            descs[i].innerHTML = descs[i].innerHTML.substring(0, 100)
+            descs[i].innerHTML += "..."
+          }
+        }
+      })
+      .catch(error => {
+        $('#loader1').hide()
+        mydiv.innerHTML = `<div class="container">
+                              <div>
+                                <h6 class="text-muted">Latest updates</h6>
+                                <hr><br>
+                              </div><h4>Something went wrong</h4>`
+      })
+  }
+
+</script>
+{% endblock %}
